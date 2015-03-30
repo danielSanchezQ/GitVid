@@ -4,6 +4,8 @@ __author__ = 'Daniel Sanchez Quiros'
 import os.path as osp
 import os
 
+
+
 def getFilesFromPath(path):
     if osp.exists(path):
         os.chdir(path)
@@ -22,7 +24,9 @@ def getFilesFromPath(path):
 
 
 if __name__ == "__main__":
-    print all(map (osp.isfile,getFilesFromPath("C:/Users/Netwave/Documents/Visual Studio 2013")))
+    flst = getFilesFromPath("C:/Users/Netwave/Documents/Visual Studio 2013")
+    print flst
+    print all(map (osp.isfile,flst))
 
 
 
