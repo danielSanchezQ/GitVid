@@ -16,8 +16,6 @@ def redirectoutput(f):
         return stringret, error
     return ret
 
-
-
 def getVersion():
     return subprocess.check_output("git --version").strip("\n")
 
