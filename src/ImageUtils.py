@@ -1,4 +1,4 @@
-__author__ = 'Netwave'
+__author__ = 'Daniel Sanchez Quiros'
 
 import hashlib
 import cv2

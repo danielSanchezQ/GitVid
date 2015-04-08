@@ -1,10 +1,10 @@
-__author__ = 'Netwave'
+__author__ = 'Daniel Sanchez Quiros'
 
 import os
 from cStringIO import StringIO
 import subprocess
 
-def redirectoutput(f):
+def redirect_output(f):
     def ret(*args):
         old_stout = os.sys.stdout
         myStdout = StringIO()
@@ -41,11 +41,3 @@ if __name__ == "__main__":
     cloneRepo(p)
     os.chdir("c:/tests/spheres")
     print countRevisions()
-
-
-
-
-
-
-
-
