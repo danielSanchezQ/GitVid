@@ -6,7 +6,7 @@ import os
 
 
 
-def getFilesFromPath(path):
+def getFilesFromPath(path, *args):
     if osp.exists(path):
         os.chdir(path)
         ret = []
@@ -16,17 +16,24 @@ def getFilesFromPath(path):
         if content:
             for e in map(getFilesFromPath, content):
                 ret.extend(e)
-        return ret
+        return filter(lambda x: osp.basename(x) not in args, ret)
+    else:
+        raise ValueError("Path does not exists!")
+
+def getFromPathAndExtension(path, extension):
+    if osp.exists(path):
+        return filter(lambda x: osp.splitext(x)[1] == extension,os.listdir(path))
     else:
         raise ValueError("Path does not exists!")
 
 
 
-
 if __name__ == "__main__":
-    flst = getFilesFromPath("C:/Users/Netwave/Documents/Visual Studio 2013")
-    print flst
+    from pprint import pprint
+    flst = getFilesFromPath(r"C:/tests/spheres")
+    pprint(flst)
     print all(map (osp.isfile,flst))
+    print getFromPathAndExtension("c:/tests", ".png")
 
 
 
