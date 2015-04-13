@@ -10,18 +10,18 @@ Highlevel goals of the project:
 	
 Features needed:
 	Git wrapper for interacting with git:
-		Clone repo							DONE
+		Clone repo						DONE
 		Get Commit count					DONE
 		Rever to commit						DONE
 		
 	Find files module for search all files in directory:
-		Search								DONE
-		Find files by extension				DONE
+		Search							DONE
+		Find files by extension					DONE
 		
 	Image processing and calcs module for building up the images:
 		Get info from lines					DONE
-		Build image							DONE
-		Save image to png format			DONE
+		Build image						DONE
+		Save image to png format				DONE
 	
 	Video generation:
 		Load all files sorted
