@@ -19,9 +19,9 @@ class ImgUtils:
     @staticmethod
     def hexlify(data):
         return hashlib.md5(data).hexdigest()
-
-    def hexlifylines(self):
-        return [self.hexlify(x) for x in open(self.file).readlines()]
+    @staticmethod
+    def hexlifylines(fname):
+        return [ImgUtils.hexlify(x) for x in open(fname).readlines()]
 
     @staticmethod
     def split8bits(data):
@@ -59,16 +59,28 @@ class ImgUtils:
     def toImage(array):
         return cv2.imdecode(array, 0)
 
-    def calcData(self):
-        f = lambda x : int(self.normalize(self.parsenum(x)))
-        return map(lambda x: self.reduceAlpha(*x), map(lambda x: map(f,x), map(self.split8bits ,self.hexlifylines())))
-
     @staticmethod
     def replicatedDataLst(lst, size=100):
         return map(lambda x: ImgUtils.repeatLst(x, size),lst)
 
+    @staticmethod
+    def calcData(filename):
+        f = lambda x : int(ImgUtils.normalize(ImgUtils.parsenum(x)))
+        return map(lambda x: ImgUtils.reduceAlpha(*x), map(lambda x: map(f,x), map(ImgUtils.split8bits ,ImgUtils.hexlifylines())))
+
+    @staticmethod
+    def refill(lst, sizeY, sizeX=10):
+        lst.extend([0,0,0]*sizeX for x in xrange(sizeY))
+        return lst
+
+    @staticmethod
+    def calcBunchFiles(replicatedSize=10, *args):
+        replicated = map(lambda x: ImgUtils.replicatedDataLst(replicatedSize, ImgUtils.calcData(x)), args)
+        return map(lambda x: ImgUtils.refill(x, max(map(lambda x: len(x), replicated)), replicatedSize), replicated)
+
+
     def doIt(self):
-        return self.toImage(self.npArrayReplicated(self.calcData()))
+        return self.toImage(self.npArrayReplicated(self.calcData(self.file)))
 
     def doAndSave(self ,outdir=None):
         filename, _ = op.splitext(op.basename(self.file))
@@ -78,6 +90,19 @@ class ImgUtils:
         else:
             outdir = op.basename(filename+extension)
         cv2.imwrite(outdir, self.doIt())
+
+    @staticmethod
+    def data2Png(data, outdir):
+        with open(outdir, 'wb') as f:
+            data = ImgUtils.replicatedDataLst(data,100)
+            if data:
+                w = png.Writer(len(data[0])/3, len(data), greyscale=False)
+                w.write(f, data)
+        return outdir
+
+    @staticmethod
+    def reduceAndSave2Png(lst):
+        ImgUtils.data2Png(reduce(lambda x, y: map(a+b for a,b in  zip(x, y))))
 
     def toPNG(self, outdir=None):
         filename, _ = op.splitext(op.basename(self.file))
