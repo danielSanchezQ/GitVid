@@ -1,0 +1,28 @@
+GitVid RoadMap
+
+
+
+Highlevel goals of the project:
+	GitVid would be a histogram builder for git proyects. 
+	It will clone a project, iterate over the commits and files and generate a color code image file for every commit, 
+	then it will create a movie over all this data.
+	
+	
+Features needed:
+	Git wrapper for interacting with git:
+		Clone repo							DONE
+		Get Commit count					DONE
+		Rever to commit						DONE
+		
+	Find files module for search all files in directory:
+		Search								DONE
+		Find files by extension				DONE
+		
+	Image processing and calcs module for building up the images:
+		Get info from lines					DONE
+		Build image							DONE
+		Save image to png format			DONE
+	
+	Video generation:
+		Load all files sorted
+		Build and save the movie
