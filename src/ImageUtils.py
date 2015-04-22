@@ -21,7 +21,7 @@ class ImgUtils:
         return hashlib.md5(data).hexdigest()
     @staticmethod
     def hexlifylines(fname):
-        return [ImgUtils.hexlify(x) for x in open(fname).readlines()]
+        return [ImgUtils.hexlify(x) for x in open(fname).readlines()[:100]]
 
     @staticmethod
     def split8bits(data):
@@ -60,13 +60,13 @@ class ImgUtils:
         return cv2.imdecode(array, 0)
 
     @staticmethod
-    def replicatedDataLst(lst, size=100):
-        return map(lambda x: ImgUtils.repeatLst(x, size),lst)
+    def replicatedDataLst(lst, size=10):
+        return map(lambda x: ImgUtils.repeatLst(x, size), lst)
 
     @staticmethod
     def calcData(filename):
         f = lambda x : int(ImgUtils.normalize(ImgUtils.parsenum(x)))
-        return map(lambda x: ImgUtils.reduceAlpha(*x), map(lambda x: map(f,x), map(ImgUtils.split8bits ,ImgUtils.hexlifylines())))
+        return map(lambda x: ImgUtils.reduceAlpha(*x), map(lambda x: map(f,x), map(ImgUtils.split8bits ,ImgUtils.hexlifylines(filename))))
 
     @staticmethod
     def refill(lst, sizeY, sizeX=10):
@@ -75,8 +75,8 @@ class ImgUtils:
 
     @staticmethod
     def calcBunchFiles(replicatedSize=10, *args):
-        replicated = map(lambda x: ImgUtils.replicatedDataLst(replicatedSize, ImgUtils.calcData(x)), args)
-        return map(lambda x: ImgUtils.refill(x, max(map(lambda x: len(x), replicated)), replicatedSize), replicated)
+        replicated = map(lambda x: ImgUtils.replicatedDataLst(ImgUtils.calcData(x), replicatedSize), args)
+        return map(lambda x: ImgUtils.refill(x, max(map(lambda y: len(y), replicated))- len(x), replicatedSize), replicated)
 
 
     def doIt(self):
@@ -94,15 +94,15 @@ class ImgUtils:
     @staticmethod
     def data2Png(data, outdir):
         with open(outdir, 'wb') as f:
-            data = ImgUtils.replicatedDataLst(data,100)
+            #data = ImgUtils.replicatedDataLst(data,100)
             if data:
                 w = png.Writer(len(data[0])/3, len(data), greyscale=False)
                 w.write(f, data)
         return outdir
 
     @staticmethod
-    def reduceAndSave2Png(lst):
-        ImgUtils.data2Png(reduce(lambda x, y: map(a+b for a,b in  zip(x, y))))
+    def reduceAndSave2Png(outdir, *args):
+        ImgUtils.data2Png(reduce(lambda x, y: [a+b for a,b in zip(x, y)] , ImgUtils.calcBunchFiles(1, *args)), outdir)
 
     def toPNG(self, outdir=None):
         filename, _ = op.splitext(op.basename(self.file))
@@ -122,13 +122,9 @@ class ImgUtils:
 if __name__ == "__main__":
     from pprint import pprint
     import png
-    img = ImgUtils(r"C:/tests/spheres/.gitignore")
-    #i = img.npArrayReplicated(img.calcData())
-    #png.Writer().write("c:/tests/", i)
-    #pprint(i)
-    img.toPNG(r"C:/tests")
-    #img.doAndSave(r"C:/tests")
+    import PathUtils
 
+    ImgUtils.reduceAndSave2Png(r"C:\tests\test_django.png", *PathUtils.getFilesFromPath(r"C:\tests\django"))
 
 
 

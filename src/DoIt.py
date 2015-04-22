@@ -5,19 +5,17 @@ from PathUtils import *
 from ImageUtils import *
 
 
-def test1(inpath, outpath):
+def test1(repodir, repoout, inpath, outpath):
+    cloneRepo(repodir,repoout)
+    print "getting files"
     files = getFilesFromPath(inpath)
-    imgs = []
-    for file in files:
-        img = ImgUtils(file)
-        imgs.append(img.toPNG(outpath))
-        del img
-    return imgs
+    print "building image"
+    ImgUtils.reduceAndSave2Png(outpath, *files)
+    return files
 
 
 if __name__ == "__main__":
-    a = test1(r"c:/tests/spheres", r"c:/tests")
-    print len(a) == len(getFilesFromPath(r"c:/tests/spheres"))
+    a = test1("https://github.com/django/django.git", r"c:/tests",r"c:/tests/django", r"c:/tests")
 
 
 
