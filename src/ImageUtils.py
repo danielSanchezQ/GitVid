@@ -102,7 +102,16 @@ class ImgUtils:
 
     @staticmethod
     def reduceAndSave2Png(outdir, *args):
-        ImgUtils.data2Png(reduce(lambda x, y: [a+b for a,b in zip(x, y)] , ImgUtils.calcBunchFiles(1, *args)), outdir)
+        return ImgUtils.data2Png(reduce(lambda x, y: [a+b for a,b in zip(x, y)] , ImgUtils.calcBunchFiles(1, *args)), outdir)
+
+    @staticmethod
+    def renderVideo(path, basename, framenum, filepath):
+        vw = cv2.VideoWriter(filepath,'MJPG', 12)
+        for i in xrange(framenum):
+            img = cv2.imread(basename.format(i))
+            vw.write(img)
+        return vw
+
 
     def toPNG(self, outdir=None):
         filename, _ = op.splitext(op.basename(self.file))
