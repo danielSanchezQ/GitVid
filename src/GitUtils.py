@@ -24,8 +24,19 @@ def cloneRepo(dir, path = None, username = None, passwd = None):
         os.chdir(path)
     return subprocess.check_output("git clone {dir}".format(dir=dir))
 
-def revert():
-    subprocess.check_output("git revert")
+
+def getCommits(path= None):
+    if path:
+        os.chdir(path)
+    ret = [x for x in subprocess.check_output("git log --pretty=%H").split("\n")]
+    #ret.reverse()
+    return ret[:-1]
+
+def checkout(checkout_code, path = None):
+    if path:
+        os.chdir(path)
+    subprocess.check_output("git checkout master")
+    subprocess.check_output("git checkout {}".format(checkout_code))
 
 #def getcheckout(revision):
 #    subprocess.check_output("git checkout ")
@@ -36,8 +47,10 @@ def countRevisions(path=None):
     return int(subprocess.check_output("git rev-list HEAD --count").strip("\n"))
 
 if __name__ == "__main__":
-    p = "https://github.com/fourthbit/spheres.git"
-    os.chdir("c:/tests")
-    cloneRepo(p)
-    os.chdir("c:/tests/spheres")
-    print countRevisions()
+    from pprint import pprint
+    #p = "https://github.com/fourthbit/spheres.git"
+    #os.chdir("c:/tests")
+    #cloneRepo(p)
+    #os.chdir("c:/tests/spheres")
+    print countRevisions(r"C:\tests\MLPNeuralNet")
+    pprint(getCommits(r"C:\tests\MLPNeuralNet"))

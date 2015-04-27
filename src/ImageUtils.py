@@ -5,7 +5,9 @@ import cv2
 import numpy as np
 import math
 import os.path as op
+import os
 from itertools import repeat
+import subprocess
 import png
 
 class ImgUtils:
@@ -104,13 +106,23 @@ class ImgUtils:
     def reduceAndSave2Png(outdir, *args):
         return ImgUtils.data2Png(reduce(lambda x, y: [a+b for a,b in zip(x, y)] , ImgUtils.calcBunchFiles(1, *args)), outdir)
 
+
+    #@staticmethod
+    #def renderVideo(path, basename, framenum, filepath):
+    #    img = cv2.imread(op.join(path, basename.format(1)))
+    #    vw = cv2.VideoWriter(filepath,cv2.VideoWriter_fourcc(*'FMP4'), 20, (len(img[0]), len(img)), 1)
+    #    for i in xrange(framenum):
+    #        img = cv2.imread(op.join(path, basename.format(i+1)))
+    #        vw.write(img)
+    #    return vw
+
     @staticmethod
-    def renderVideo(path, basename, framenum, filepath):
-        vw = cv2.VideoWriter(filepath,'MJPG', 12)
-        for i in xrange(framenum):
-            img = cv2.imread(basename.format(i))
-            vw.write(img)
-        return vw
+    def renderVideo(sourcepath, basename, filepath):
+        os.chdir(sourcepath)
+        command = 'ffmpeg.exe -f image2 -pattern_type sequence -start_number 0 -i "{bname}" '.format(bname=basename)+ ' -c:v libx264 -r 30 {}'.format(filepath)
+        #command = 'ffmpeg.exe -f image2 -framerate 12 -pattern_type sequence -start_number 1 -vcodec mpeg4 -i "{bname}" '.format(bname=basename) + filepath
+        print command
+        return subprocess.check_output(command)
 
 
     def toPNG(self, outdir=None):
